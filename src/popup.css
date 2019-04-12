@@ -1,0 +1,9 @@
+body {
+  background-color: #eee;
+}
+
+#container_popup>a {
+  color: #000;
+  text-decoration: underline;
+  outline: 0;
+}

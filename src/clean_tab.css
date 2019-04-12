@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+
+#container_clean_tab {
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+  background-attachment: fixed;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}

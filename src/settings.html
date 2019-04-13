@@ -1,32 +1,50 @@
 <html>
-  <head>
-    <meta charset="utf-8" />
+
+<head>
     <title>Clean Tab settings</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="settings.css">
     <script type="text/javascript" src="settings.js"></script>
-  </head>
+</head>
 
-  <body>
-    <h2>Settings</h2>
+<body>
 
-    <p>
-      Specify your Clean Tab background (e.g. <strong>C:\My images\image.jpg</strong> or <strong>/home/myuser/my_images/image.png</strong>):<br />
-      <input type="text" size="100" id="wallpaper_path" name="wallpaper_path" value="" placeholder="Specify the filepath" /> (<em>permitted extensions are: <strong>jpg</strong>, <strong>png</strong></em>)
-    </p>
+<p>
+    <em>Clean Tab with your background (v2.0.0)</em>
+</p>
 
-    <p>
-      Specify the "background-position" value (default: <strong>center bottom</strong>):<br />
-      <input type="text" size="18" id="wallpaper_position" name="wallpaper_position" value="" placeholder="Specify the value" />
-    </p>
-    
-    <p>
-      Specify background color for cases when you have no background image or this image is too small (default: <strong>#333</strong>):<br />
-      <input type="text" size="12" id="background_color" name="background_color" value="" placeholder="Specify the value" />
-        (<em>you can use any valid CSS background-color value: e. g. <strong>#aabbcc</strong>, <strong>#f20</strong>, <strong>darkblue</strong> etc.</em>)
-    </p>
+<h2>Settings</h2>
 
-    <p>
-      <input type="button" id="settings_save" name="settings_save" value="Save your settings" />
-      <span id="settings_save_result"></span>
-    </p>
-  </body>
+<p>
+    Specify background color for cases when you have no background image or this image is too small (default:
+    <strong>#333</strong>):
+    <br><input type="text" size="12" id="background_color" name="background_color" value=""
+           placeholder="Specify the value">
+    (<em>you can use any valid CSS background-color value: e. g. <strong>#aabbcc</strong>, <strong>#f20</strong>,
+    <strong>darkblue</strong> etc.</em>)
+</p>
+
+<p>
+    Choose an image to load as the new tab background image:
+    <br><input type="file" id="wallpaper_browser" name="wallpaper_browser">
+    <input type="button" id="wallpaper_clear" name="wallpaper_clear" value="Clear">
+
+    <br><span id="wallpaper_processed_message"></span>
+    <br><!--suppress RequiredAttributes, HtmlRequiredAltAttribute -->
+    <img class="wallpaper_processed_img" id="wallpaper_processed_img" style="display: none;">
+</p>
+
+<p>
+    Specify the "background-position" value (default: <strong>center bottom</strong>):
+    <br><input type="text" size="18" id="wallpaper_position" name="wallpaper_position" value=""
+               placeholder="Specify the value">
+</p>
+
+<p>
+    <input type="button" id="settings_save" name="settings_save" value="Save your settings">
+    <span id="settings_save_result"></span>
+</p>
+
+</body>
+
 </html>

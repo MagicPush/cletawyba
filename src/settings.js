@@ -1,90 +1,165 @@
 window.onload = function () {
-  chrome.storage.local.get(['wallpaper_path', 'wallpaper_position'], function (items) {
-    if (items['wallpaper_path']) {
-      document.getElementById('wallpaper_path').setAttribute('value', items['wallpaper_path']);
-    }
-    if (items['wallpaper_position']) {
-      document.getElementById('wallpaper_position').setAttribute('value', items['wallpaper_position']);
-    }
-    if (items['background_color']) {
-      document.getElementById('background_color').setAttribute('value', $items['background_color']);
-    }
-  });
+    /** @var {Object} chrome */
+    chrome.storage.local.get(
+        ['wallpaper_background_base64', 'wallpaper_position', 'background_color'],
+        settingsLoadFromStorage
+    );
 
-  document.getElementById('settings_save').onclick = function () {
-    saveWallpaperPath();
-  }
+    document.getElementById('wallpaper_browser').onchange = wallpaperLoadFromInput;
+    document.getElementById('wallpaper_clear').onclick = wallpaperContainerClear;
+    document.getElementById('settings_save').onclick = settingsSave;
+};
 
 
-  function saveWallpaperPath() {
-    var save_result_obj = document.getElementById('settings_save_result');
-    save_result_obj.innerHTML = '';
+const domIdWallpaperProcessedMessage = 'wallpaper_processed_message';
+const domIdWallpaperProcessedImg = 'wallpaper_processed_img';
+
+const imageEncodedSizeMax = 4194304;
+
+
+/**
+ * Places "message" in "domMessage" inner HTML as a plain text.
+ * Marks "domMessage" with red color if "is_error" is true or green otherwise.
+ *
+ * @param {Object} domMessage Document element object needed to show a message
+ * @param {String} message Message text
+ * @param {Boolean} is_error If "message" must be shown as an error
+ */
+function domSetMessage(domMessage, message, is_error = false) {
+    domMessage.style = 'color: ' + (is_error ? 'red' : 'green') + ';';
+    domMessage.textContent = message;
+}
+
+/**
+ * Loads saved settings from a user storage and applies to the settings form.
+ *
+ * @see wallpaperContainerPut
+ * @param {Object} storageItems The storage object with saved extension settings:
+ * @param {string} storageItems.background_color "background_color" style value
+ * @param {string} storageItems.wallpaper_background_base64 base64 encoded background for "background-image" style
+ * @param {string} storageItems.wallpaper_position "background-position" style value
+ */
+function settingsLoadFromStorage(storageItems) {
+    if (undefined !== storageItems.background_color && storageItems.background_color) {
+        document.getElementById('background_color').setAttribute('value', storageItems.background_color);
+    }
+    if (undefined !== storageItems.wallpaper_background_base64 && storageItems.wallpaper_background_base64) {
+        wallpaperContainerPut(storageItems.wallpaper_background_base64);
+    }
+    if (undefined !== storageItems.wallpaper_position && storageItems.wallpaper_position) {
+        document.getElementById('wallpaper_position').setAttribute('value', storageItems.wallpaper_position);
+    }
+}
+
+/**
+ * Saves settings from the form fields to the storage.
+ */
+function settingsSave() {
+    let domSaveResult;
+
+    domSaveResult = document.getElementById('settings_save_result');
+    domSetMessage(domSaveResult, '');
 
     try {
-      var wallpaper_path = document.getElementById('wallpaper_path').value;
-      if (wallpaper_path) {
-        wallpaper_path = wallpaper_path.replace(/\\/g, '/');
-        wallpaper_path = 'file:///' + wallpaper_path.replace(/file:(\/)*/g, '');
+        /** @var {Object} chrome.runtime */
+        chrome.storage.local.set(
+            {
+                'wallpaper_background_base64': document.getElementById(domIdWallpaperProcessedImg).src,
+                'wallpaper_position': document.getElementById('wallpaper_position').value,
+                'background_color': document.getElementById('background_color').value
+            },
+            function () {
+                if (chrome.runtime.lastError) {
+                    // In fact this piece of Google shit catches ANY exceptions
+                    // (so don't bother to create an own exception).
+                    // All exceptions messages are sent to console.
+                    // And you can't get anything from this function to the upper code area.
 
-        chrome.permissions.request(
-          {'origins': [wallpaper_path]},
-          function (granted) {
-            if (!granted && false) { // will be done in v1.2
-              // In fact this piece of Google shit catches ANY exceptions (so don't bother to create an own exception). All exceptions messages are sent to console. And you can't get anything from this function to the upper code area.
-              var exception_message = 'Unable to save your background location. Ensure that "Allow access to file URLs" option is checked in extension settings.';
-              // For now it's the only way to tell the user what has happened.
-              setMessage(save_result_obj, exception_message, true);
-              // For now this line is almost useless;
-              throw new Error(exception_message);
+                    // For now it's the only way to tell the user what has happened.
+                    domSetMessage(domSaveResult, chrome.runtime.lastError, true);
+                    // For now this line is almost useless;
+                    throw new Error(chrome.runtime.lastError);
+                }
+                domSetMessage(domSaveResult, 'Your settings are saved successfully.');
             }
-          }
         );
-        // This shit doesn't work and there is no logic why.
-        // alert('a'); // uncomment this to see genius javascript developers logic
-        if (save_result_obj.innerHTML) {
-          throw new Error(save_result_obj.innerHTML);
-        }
-      }
-
-      var wallpaper_position = document.getElementById('wallpaper_position').value;
-      
-      var background_color = document.getElementById('background_color').value;
-
-      chrome.storage.local.set(
-        {
-          'wallpaper_path':     wallpaper_path,
-          'wallpaper_position': wallpaper_position,
-          'background_color':   background_color
-        },
-        function () {
-          if (chrome.runtime.lastError) {
-            // In fact this piece of Google shit catches ANY exceptions (so don't bother to create an own exception). All exceptions messages are sent to console. And you can't get anything from this function to the upper code area.
-            // For now it's the only way to tell the user what has happened.
-            setMessage(save_result_obj, chrome.runtime.lastError, true);
-            // For now this line is almost useless;
-            throw new Error(chrome.runtime.lastError);
-          }
-          setMessage(save_result_obj, 'Your settings are saved successfully.', false);
-        }
-      );
     }
-    // For now this is useless;
+        // For now this is useless;
     catch (exception_main) {
-      setMessage(save_result_obj, exception_main.message, true);
+        domSetMessage(domSaveResult, exception_main.message, true);
     }
-  }
+}
 
-  /**
-   * Places "message" between open and close tags of "tag_obj".
-   * Marks by red color if "is_error" is true.
-   *
-   * @param {Object} tag_obj Document element object needed to show a message
-   * @param {String} message Message text
-   * @param {Boolean} is_error If "message" must be shown as an error
-   */
-  function setMessage(tag_obj, message, is_error)
-  {
-    tag_obj.setAttribute('style', 'color: ' + (is_error ? 'red' : 'green') + ';');
-    tag_obj.innerHTML = message;
-  }
+/**
+ * Clears the wallpaper img container. Also removes wallpaper load message.
+ */
+function wallpaperContainerClear() {
+    let domImage;
+
+    domSetMessage(document.getElementById(domIdWallpaperProcessedMessage), '');
+
+    domImage = document.getElementById(domIdWallpaperProcessedImg);
+    domImage.style.display = 'none';
+    domImage.removeAttribute('src');
+}
+
+/**
+ * Puts wallpaper encoded in base64 into img container.
+ *
+ * @param wallpaperBase64 Input wallpaper base64
+ */
+function wallpaperContainerPut(wallpaperBase64) {
+    let domImage;
+
+    domSetMessage(document.getElementById(domIdWallpaperProcessedMessage), '');
+
+    domImage = document.getElementById(domIdWallpaperProcessedImg);
+    domImage.src = wallpaperBase64;
+    domImage.style.display = 'block';
+}
+
+/**
+ * Encodes input image from blob to base64 and puts it into img container.
+ *
+ * @see FileReader
+ * @see FileReader.readAsDataURL
+ * @see wallpaperContainerPut
+ * @param fileLoadedEvent FileReader object created by readAsDataURL
+ */
+function wallpaperEncodeAndPlace(fileLoadedEvent) {
+    let imageEncoded;
+    let imageEncodedSize;
+
+    imageEncoded = fileLoadedEvent.target.result;
+    imageEncodedSize = imageEncoded.length;
+    if (imageEncodedSize > imageEncodedSizeMax) {
+        domSetMessage(document.getElementById(domIdWallpaperProcessedMessage),
+            'The image (while encoded - ' + imageEncodedSize + ' bytes) is larger than the maximum allowed: '
+            + imageEncodedSizeMax + ' bytes', true);
+
+        return;
+    }
+
+    wallpaperContainerPut(imageEncoded);
+}
+
+/**
+ * Loads input image from blob ("Choose File" button) and sends to further processing.
+ *
+ * @see FileReader
+ * @see FileReader.readAsDataURL
+ * @see wallpaperEncodeAndPlace
+ */
+function wallpaperLoadFromInput() {
+    let fileList;
+    let fileReader;
+
+    fileList = this.files;
+    if (fileList.length < 1) {
+        return;
+    }
+
+    fileReader = new FileReader();
+    fileReader.onload = wallpaperEncodeAndPlace;
+    fileReader.readAsDataURL(fileList[0]);
 }

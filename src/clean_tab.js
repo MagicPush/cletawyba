@@ -1,6 +1,9 @@
 window.onload = function () {
     /** @var {Object} chrome */
-    chrome.storage.local.get(['background_color', 'wallpaper_background_base64', 'wallpaper_position'], loadTab);
+    chrome.storage.local.get(
+        ['background_color', 'wallpaper_background_base64', 'wallpaper_position', 'wallpaper_size'],
+        loadTab
+    );
 };
 
 /**
@@ -10,6 +13,7 @@ window.onload = function () {
  * @param {string} tabItems.background_color "background_color" style value
  * @param {string} tabItems.wallpaper_background_base64 base64 encoded background for "background-image" style
  * @param {string} tabItems.wallpaper_position "background-position" style value
+ * @param {string} tabItems.wallpaper_size "background-size" style value
  */
 function loadTab(tabItems)
 {
@@ -23,6 +27,9 @@ function loadTab(tabItems)
     }
     if (undefined !== tabItems.wallpaper_position && tabItems.wallpaper_position) {
         styleValue += 'background-position: ' + tabItems.wallpaper_position + '; ';
+    }
+    if (undefined !== tabItems.wallpaper_size && tabItems.wallpaper_size) {
+        styleValue += 'background-size: ' + tabItems.wallpaper_size + '; ';
     }
 
     if (styleValue) {

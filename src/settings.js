@@ -1,7 +1,7 @@
 window.onload = function () {
     /** @var {Object} chrome */
     chrome.storage.local.get(
-        ['wallpaper_background_base64', 'wallpaper_position', 'background_color'],
+        ['wallpaper_background_base64', 'wallpaper_position', 'wallpaper_size', 'background_color'],
         settingsLoadFromStorage
     );
 
@@ -38,6 +38,7 @@ function domSetMessage(domMessage, message, is_error = false) {
  * @param {string} storageItems.background_color "background_color" style value
  * @param {string} storageItems.wallpaper_background_base64 base64 encoded background for "background-image" style
  * @param {string} storageItems.wallpaper_position "background-position" style value
+ * @param {string} storageItems.wallpaper_size "background-size" style value
  */
 function settingsLoadFromStorage(storageItems) {
     if (undefined !== storageItems.background_color && storageItems.background_color) {
@@ -48,6 +49,9 @@ function settingsLoadFromStorage(storageItems) {
     }
     if (undefined !== storageItems.wallpaper_position && storageItems.wallpaper_position) {
         document.getElementById('wallpaper_position').setAttribute('value', storageItems.wallpaper_position);
+    }
+    if (undefined !== storageItems.wallpaper_size && storageItems.wallpaper_size) {
+        document.getElementById('wallpaper_size').setAttribute('value', storageItems.wallpaper_size);
     }
 }
 
@@ -66,6 +70,7 @@ function settingsSave() {
             {
                 'wallpaper_background_base64': document.getElementById(domIdWallpaperProcessedImg).src,
                 'wallpaper_position': document.getElementById('wallpaper_position').value,
+                'wallpaper_size': document.getElementById('wallpaper_size').value,
                 'background_color': document.getElementById('background_color').value
             },
             function () {

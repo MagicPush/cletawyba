@@ -2,6 +2,12 @@
 
 This history log references the repository releases which respect [semantic versioning](https://semver.org/).
 
+## 2.1.0 (2019-09-23)
+
+### Features
+
+- New option available: `background-size` (default value: `cover`). 
+
 ## 2.0.0 (2019-04-13)
 
 ### Features

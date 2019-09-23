@@ -9,4 +9,5 @@ body {
     background-attachment: fixed;
     background-position: center bottom;
     background-repeat: no-repeat;
+    background-size: cover;
 }

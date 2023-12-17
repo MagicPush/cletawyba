@@ -2,6 +2,16 @@
 
 This history log references the repository releases which respect [semantic versioning](https://semver.org/).
 
+## 3.0.0 (2023-12-17)
+
+### Main changes
+
+- Migrated to the new Manifest version
+according to Google's [Migrate to Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate?hl=en)
+(so the extension could continue to exist in Chrome Web Store).
+
+There are no changes made for the extension's functionality.
+
 ## 2.1.0 (2019-09-23)
 
 ### Features
@@ -13,7 +23,7 @@ This history log references the repository releases which respect [semantic vers
 ### Features
 
 - Setting a wallpaper works again (after Google broke reading from "file://").
-- Finally you can pick an image by "Choose File" button! Adn there is no image type restrictions!
+- Finally, you can pick an image by "Choose File" button! And there is no image type restrictions!
     - Unfortunately from now on the wallpaper size is limited (4 MB max after encoding into base64).
 
 ## 1.1.1 (2014-10-07)

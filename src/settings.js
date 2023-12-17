@@ -33,7 +33,7 @@ function domSetMessage(domMessage, message, is_error = false) {
 /**
  * Loads saved settings from a user storage and applies to the settings form.
  *
- * @see wallpaperContainerPut
+ * @see wallpaperContainerPut()
  * @param {Object} storageItems The storage object with saved extension settings:
  * @param {string} storageItems.background_color "background_color" style value
  * @param {string} storageItems.wallpaper_background_base64 base64 encoded background for "background-image" style
@@ -127,8 +127,8 @@ function wallpaperContainerPut(wallpaperBase64) {
  * Encodes input image from blob to base64 and puts it into img container.
  *
  * @see FileReader
- * @see FileReader.readAsDataURL
- * @see wallpaperContainerPut
+ * @see FileReader.readAsDataURL()
+ * @see wallpaperContainerPut()
  * @param fileLoadedEvent FileReader object created by readAsDataURL
  */
 function wallpaperEncodeAndPlace(fileLoadedEvent) {
@@ -152,8 +152,8 @@ function wallpaperEncodeAndPlace(fileLoadedEvent) {
  * Loads input image from blob ("Choose File" button) and sends to further processing.
  *
  * @see FileReader
- * @see FileReader.readAsDataURL
- * @see wallpaperEncodeAndPlace
+ * @see FileReader.readAsDataURL()
+ * @see wallpaperEncodeAndPlace()
  */
 function wallpaperLoadFromInput() {
     let fileList;
